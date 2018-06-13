@@ -4,10 +4,23 @@
 #include "darray.h"
 
 
+/**
+ * Reallocs the array, expanding it if necessary.
+ *
+ * @param[in]   array         Array for realloc.
+ * @param[in]   multiplier    The multiplier of the new DArray size.
+ *
+ * @return      DArrayThe     DArray.
+ */
 static DArray*
 d_array_realloc(DArray*      array,
                 unsigned int multiplier);
 
+/**
+ * Checks the array, expanding it if necessary.
+ *
+ * @param[in]   array       Array for realloc.
+ */
 static inline void
 realloc_check(DArray* array)
 {
@@ -15,6 +28,14 @@ realloc_check(DArray* array)
         d_array_realloc(array, 2);
 }
 
+/**
+ * Creates a new DArray.
+ *
+ * @param[in]   size        Size of new array.
+ * @param[in]   type_size   The size of the type for each element of the array.
+ *
+ * @return      DArray      The new DArray.
+ */
 DArray*
 d_array_new(unsigned int size,
             size_t       type_size)
@@ -28,6 +49,11 @@ d_array_new(unsigned int size,
     return (DArray*) new_array;
 }
 
+/**
+ * Cleanup function. Frees the memory allocated for the DArray.
+ *
+ * @param[in]   array       The array for cleaning.
+ */
 void
 d_array_free(DArray* array)
 {
@@ -35,6 +61,14 @@ d_array_free(DArray* array)
     free(array);
 }
 
+/**
+ * Adds the value on to the end of the array. The array will grow in size automatically if necessary.
+ *
+ * @param[in]   array       Array to add.
+ * @param[in]   item        The value to append to the DArray.
+ *
+ * @return      DArray      The new DArray.
+ */
 DArray*
 d_array_append(DArray* array,
                CAny    item)
@@ -76,6 +110,14 @@ d_array_realloc(DArray*      array,
     return (DArray*) array;
 }
 
+/**
+ * Resizes the size of the array, expanding it if necessary.
+ *
+ * @param[in]   array       Array for resizing.
+ * @param[in]   new_size    The new size of the DArray.
+ *
+ * @return      DArray      The new DArray.
+ */
 DArray*
 d_array_resize(DArray*      array,
                unsigned int new_size)

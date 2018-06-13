@@ -16,6 +16,7 @@
 
 bin/*
 lib/*
+doc/*
 
 # Cmake files
 DartConfiguration.tcl

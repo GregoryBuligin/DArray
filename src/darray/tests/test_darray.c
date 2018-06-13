@@ -1,4 +1,3 @@
-#include <stdbool.h>
 #include <check.h>
 
 #include "darray.h"
@@ -93,6 +92,12 @@ START_TEST(test_darray_d_array_length)
 }
 END_TEST
 
+START_TEST(test_darray_d_array_length_with_reserve)
+{
+    ck_assert_int_eq(d_array_length_with_reserve(darray), 5);
+}
+END_TEST
+
 START_TEST(test_darray_d_array_get_type_size)
 {
     DArray* darray1 = d_array_new(5, sizeof(char));
@@ -169,10 +174,11 @@ darray_suite()
     tcase_add_test(tc_macroses, test_darray_d_array_front);
     tcase_add_test(tc_macroses, test_darray_d_array_back);
     tcase_add_test(tc_macroses, test_darray_d_array_length);
+    tcase_add_test(tc_macroses, test_darray_d_array_is_empty);
+    tcase_add_test(tc_macroses, test_darray_d_array_length_with_reserve);
     tcase_add_test(tc_macroses, test_darray_d_array_get_type_size);
     tcase_add_test(tc_macroses, test_darray_d_array_fill);
     tcase_add_test(tc_macroses, test_darray_d_array_shrink_to_fit);
-    tcase_add_test(tc_macroses, test_darray_d_array_is_empty);
 
     suite_add_tcase(suite, tc_macroses);
 
