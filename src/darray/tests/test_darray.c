@@ -21,12 +21,61 @@ START_TEST(test_darray_creation)
 }
 END_TEST
 
-START_TEST(test_darray_append)
+START_TEST(test_d_array_append)
 {
     int number = 42;
+
+    darray = d_array_append(darray, NULL);
     darray = d_array_append(darray, TO_ANY(number));
+
     int test = d_array_at(darray, int, 0);
     ck_assert_int_eq(test, number);
+}
+END_TEST
+
+START_TEST(test_d_array_prepend_if_empty)
+{
+    int number = 42;
+
+    darray = d_array_prepend(darray, TO_ANY(number));
+
+    int test = d_array_at(darray, int, 0);
+    ck_assert_int_eq(test, number);
+}
+END_TEST
+
+START_TEST(test_d_array_prepend)
+{
+    int number1 = 42;
+    int number2 = 1;
+
+    darray = d_array_append(darray, TO_ANY(number1));
+    darray = d_array_prepend(darray, TO_ANY(number2));
+
+    int test = d_array_at(darray, int, 0);
+    ck_assert_int_eq(test, number2);
+}
+END_TEST
+
+START_TEST(test_d_array_remove_index)
+{
+    int number1 = 1;
+    int number2 = 2;
+    int number3 = 3;
+    int number4 = 4;
+
+    darray = d_array_append(darray, TO_ANY(number1));
+    darray = d_array_append(darray, TO_ANY(number2));
+    darray = d_array_append(darray, TO_ANY(number3));
+    darray = d_array_append(darray, TO_ANY(number4));
+
+    d_array_remove_index(darray, 2);
+    ck_assert_int_eq(d_array_length(darray), 3);
+
+    // for (int i = 0; i < d_array_length(darray); i++)
+    ck_assert_int_eq(d_array_at(darray, int, 0), 1);
+    ck_assert_int_eq(d_array_at(darray, int, 1), 2);
+    ck_assert_int_eq(d_array_at(darray, int, 2), 4);
 }
 END_TEST
 
@@ -161,7 +210,10 @@ darray_suite()
     // Functions tests
     TCase* tc_functions = tcase_create("Functions");
     tcase_add_checked_fixture(tc_functions, setup, teardown);
-    tcase_add_test(tc_functions, test_darray_append);
+    tcase_add_test(tc_functions, test_d_array_append);
+    tcase_add_test(tc_functions, test_d_array_prepend_if_empty);
+    tcase_add_test(tc_functions, test_d_array_prepend);
+    tcase_add_test(tc_functions, test_d_array_remove_index);
     suite_add_tcase(suite, tc_functions);
 
     // Macroses tests

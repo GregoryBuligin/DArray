@@ -1,6 +1,7 @@
 #ifndef __DARRAY_H__
 #define __DARRAY_H__
 
+#include <stdio.h>
 #include <stdbool.h>
 
 typedef void*         Any;
@@ -198,7 +199,6 @@ DArray*
 d_array_append(DArray* array,
                CAny    item);
 
-// TO DO
 DArray*
 d_array_prepend(DArray* array,
                 CAny    item);
@@ -210,7 +210,6 @@ d_array_insert(DArray*      array,
                CAny         item,
                unsigned int length);
 
-// TO DO
 DArray*
 d_array_remove_index(DArray*      array,
                      unsigned int index);
