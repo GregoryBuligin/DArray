@@ -27,8 +27,5 @@ include(CTest)
 
 enable_testing()
 
-# find_package(Check REQUIRED)
-
 # Subdirectories
 add_subdirectory(src)
-# add_subdirectory(tests)

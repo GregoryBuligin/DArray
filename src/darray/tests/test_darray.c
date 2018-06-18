@@ -1,4 +1,5 @@
 #include <check.h>
+#include <stdlib.h>
 
 #include "darray.h"
 
@@ -187,6 +188,66 @@ START_TEST(test_darray_d_array_shrink_to_fit)
 }
 END_TEST
 
+int
+cmp_function_with_int(CAny a,
+                      CAny b)
+{
+    return ( *(int*)a - *(int*)b );
+}
+
+START_TEST(test_darray_d_array_sort_with_int)
+{
+    int number1 = 88;
+    int number2 = 56;
+    int number3 = 100;
+    int number4 = 2;
+    int number5 = 25;
+
+    darray = d_array_append(darray, TO_ANY(number1));
+    darray = d_array_append(darray, TO_ANY(number2));
+    darray = d_array_append(darray, TO_ANY(number3));
+    darray = d_array_append(darray, TO_ANY(number4));
+    darray = d_array_append(darray, TO_ANY(number5));
+
+    d_array_qsort(darray, int, cmp_function_with_int);
+    ck_assert_int_eq(d_array_at(darray, int, 0), 2);
+    ck_assert_int_eq(d_array_at(darray, int, 1), 25);
+    ck_assert_int_eq(d_array_at(darray, int, 2), 56);
+    ck_assert_int_eq(d_array_at(darray, int, 3), 88);
+    ck_assert_int_eq(d_array_at(darray, int, 4), 100);
+}
+END_TEST
+
+int
+cmp_function_with_char(CAny a,
+                       CAny b)
+{
+    return *(char*)a - *(char*)b;
+}
+
+START_TEST(test_darray_d_array_sort_with_char)
+{
+    int char1 = 'c';
+    int char2 = 'd';
+    int char3 = 'a';
+    int char4 = 'b';
+    int char5 = 'e';
+
+    darray = d_array_append(darray, TO_ANY(char1));
+    darray = d_array_append(darray, TO_ANY(char2));
+    darray = d_array_append(darray, TO_ANY(char3));
+    darray = d_array_append(darray, TO_ANY(char4));
+    darray = d_array_append(darray, TO_ANY(char5));
+
+    d_array_qsort(darray, int, cmp_function_with_char);
+    ck_assert_int_eq(d_array_at(darray, int, 0), 'a');
+    ck_assert_int_eq(d_array_at(darray, int, 1), 'b');
+    ck_assert_int_eq(d_array_at(darray, int, 2), 'c');
+    ck_assert_int_eq(d_array_at(darray, int, 3), 'd');
+    ck_assert_int_eq(d_array_at(darray, int, 4), 'e');
+}
+END_TEST
+
 START_TEST(test_darray_d_array_is_empty)
 {
     for (int i = 0; i < 3; i++)
@@ -231,6 +292,8 @@ darray_suite()
     tcase_add_test(tc_macroses, test_darray_d_array_get_type_size);
     tcase_add_test(tc_macroses, test_darray_d_array_fill);
     tcase_add_test(tc_macroses, test_darray_d_array_shrink_to_fit);
+    tcase_add_test(tc_macroses, test_darray_d_array_sort_with_int);
+    tcase_add_test(tc_macroses, test_darray_d_array_sort_with_char);
 
     suite_add_tcase(suite, tc_macroses);
 

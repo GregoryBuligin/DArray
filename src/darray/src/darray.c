@@ -7,34 +7,34 @@
 /**
  * Reallocs the array, expanding it if necessary.
  *
- * @param[in]   array         Array for realloc.
- * @param[in]   multiplier    The multiplier of the new DArray size.
+ * @param[in]   array         a DArray.
+ * @param[in]   multiplier    the multiplier of the new DArray size.
  *
- * @return      DArray        The     DArray.
+ * @return      DArray        the DArray.
  */
 static DArray*
-d_array_realloc(DArray*      array,
+_d_array_realloc(DArray*      array,
                 unsigned int multiplier);
 
 /**
  * Checks the array, expanding it if necessary.
  *
- * @param[in]   array       Array for realloc.
+ * @param[in]   array       a DArray.
  */
 static inline void
-realloc_check(DArray* array)
+_realloc_check(DArray* array)
 {
     if ((array->current_size + 1) >= array->full_size)
-        d_array_realloc(array, 2);
+        _d_array_realloc(array, 2);
 }
 
 /**
  * Creates a new DArray.
  *
- * @param[in]   size        Size of new array.
- * @param[in]   type_size   The size of the type for each element of the array.
+ * @param[in]   size        a size of new array.
+ * @param[in]   type_size   the size of the type for each element of the array.
  *
- * @return      DArray      The new DArray.
+ * @return      DArray      the new DArray.
  */
 DArray*
 d_array_new(unsigned int size,
@@ -52,7 +52,7 @@ d_array_new(unsigned int size,
 /**
  * Cleanup function. Frees the memory allocated for the DArray.
  *
- * @param[in]   array       The array for cleaning.
+ * @param[in]   array       a DArray.
  */
 void
 d_array_free(DArray* array)
@@ -70,10 +70,10 @@ d_array_free(DArray* array)
 /**
  * Adds the value on to the end of the array. The array will grow in size automatically if necessary.
  *
- * @param[in]   array       A DArray.
- * @param[in]   item        The value to append to the DArray.
+ * @param[in]   array       a DArray.
+ * @param[in]   item        the value to append to the DArray.
  *
- * @return      DArray      The DArray.
+ * @return      DArray      the DArray.
  */
 DArray*
 d_array_append(DArray* array,
@@ -84,7 +84,7 @@ d_array_append(DArray* array,
         return (DArray*) NULL;
     }
 
-    realloc_check(array);
+    _realloc_check(array);
 
     if (item == NULL)
         return (DArray*) array;
@@ -99,12 +99,13 @@ d_array_append(DArray* array,
 }
 
 /**
- * Adds the value on to the start of the array. The array will grow in size automatically if necessary.
+ * Adds the value on to the start of the array.
+ * The array will grow in size automatically if necessary.
  *
- * @param[in]   array       A DArray.
- * @param[in]   item        The value to prepend to the DArray.
+ * @param[in]   array       a DArray.
+ * @param[in]   item        the value to prepend to the DArray.
  *
- * @return      DArray      The DArray.
+ * @return      DArray      the DArray.
  */
 DArray*
 d_array_prepend(DArray* array,
@@ -115,7 +116,7 @@ d_array_prepend(DArray* array,
         return (DArray*) NULL;
     }
 
-    realloc_check(array);
+    _realloc_check(array);
 
     if (d_array_is_empty(array))
         return d_array_append(array, item);
@@ -139,10 +140,27 @@ d_array_prepend(DArray* array,
 /**
  * Removes the element at the given index from a DArray. The following elements are moved down one place.
  *
- * @param[in]   array       A DArray.
- * @param[in]   item        The index of the element to remove
+ * @param[in]   array       a DArray.
+ * @param[in]   index       the index to place the elements at.
+ * @param[in]   item        the value to insert.
  *
- * @return      DArray      The DArray.
+ * @return      DArray      the DArray.
+ */
+DArray*
+d_array_insert(DArray*      array,
+               unsigned int index,
+               CAny         item)
+{
+    return (DArray*) array;
+}
+
+/**
+ * Removes the element at the given index from a DArray. The following elements are moved down one place.
+ *
+ * @param[in]   array       a DArray.
+ * @param[in]   item        the index of the element to remove
+ *
+ * @return      DArray      the DArray.
  */
 DArray*
 d_array_remove_index(DArray*      array,
@@ -166,16 +184,16 @@ d_array_remove_index(DArray*      array,
 }
 
 static DArray*
-d_array_realloc(DArray*      array,
+_d_array_realloc(DArray*      array,
                 unsigned int multiplier)
 {
     if (array == NULL) {
-        perror("In d_array_realloc: DArray is NULL");
+        perror("In _d_array_realloc: DArray is NULL");
         return (DArray*) NULL;
     }
 
     if (multiplier <= 0) {
-        perror("In d_array_realloc: multiplier is equial or less 0");
+        perror("In _d_array_realloc: multiplier is equial or less 0");
         return (DArray*) NULL;
     }
 
@@ -189,10 +207,10 @@ d_array_realloc(DArray*      array,
 /**
  * Resizes the size of the array, expanding it if necessary.
  *
- * @param[in]   array       Array for resizing.
- * @param[in]   new_size    The new size of the DArray.
+ * @param[in]   array       a DArray.
+ * @param[in]   new_size    the new size of the DArray.
  *
- * @return      DArray      The new DArray.
+ * @return      DArray      the DArray.
  */
 DArray*
 d_array_resize(DArray*      array,
@@ -205,7 +223,7 @@ d_array_resize(DArray*      array,
 
     array->full_size = new_size;
     array->current_size = new_size;
-    array = d_array_realloc(array, 1);
+    array = _d_array_realloc(array, 1);
 
     return (DArray*) array;
 }

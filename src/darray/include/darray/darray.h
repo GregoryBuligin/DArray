@@ -2,20 +2,46 @@
 #define __DARRAY_H__
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
+
+/* Guard C code in headers, while including them from C++ */
+#ifndef __cplusplus
+#   define INCLUSION_GUARDS_BEGIN
+#   define INCLUSION_GUARDS_END
+#else
+#   define INCLUSION_GUARDS_BEGIN extern "C" {
+#   define INCLUSION_GUARDS_END   }
+#endif /* __cplusplus */
+
+/*
+ * Provide definitions for some commonly used macros.
+ * Some of them are only provided if they haven't already
+ * been defined. It is assumed that if they are already
+ * defined then the current definition is correct.
+ */
+#ifndef NULL
+#   ifdef __cplusplus
+#       define NULL             (0L)
+#   else
+#       define NULL             ((void*) 0)
+#   endif /* __cplusplus */
+#endif /* NULL */
 
 typedef void*         Any;
 typedef const void*   CAny;
 typedef struct darray DArray;
 
-typedef int (*compare_function) (CAny a,
-                                 CAny b);
+typedef int  (*compare_function)   (CAny a,
+                                    CAny b);
+
+typedef bool (*predicate_function) (CAny item);
 
 /**
  * @struct darray
  *
- * The struct of arrays of arbitrary elements which grow automatically as
- * elements are added.
+ * The struct of arrays of arbitrary elements
+ * which grow automatically as elements are added.
  */
 struct darray
 {
@@ -28,6 +54,8 @@ struct darray
     unsigned int full_size;
     /** Pointer to the underlying array serving as element storage. */
     Any          array;
+    // /** Pointer to the array end. */
+    // Any          array_end_ptr;
     /** The size of the element type in the DArray. */
     size_t       type_size;
 };
@@ -43,7 +71,7 @@ struct darray
  *
  * @param[in]   a       a DArray.
  *
- * @return      pointer to the underlying element storage.
+ * @return              pointer to the underlying element storage.
  */
 #define d_array_data(a)             ((a)->array)
 
@@ -54,7 +82,7 @@ struct darray
  *
  * @param[in]   a       a DArray.
  *
- * @return      the length of the array in bytes.
+ * @return              the length of the array in bytes.
  */
 #define d_array_size_in_byte(a)     ((a)->full_size * (a)->type_size)
 
@@ -68,7 +96,7 @@ struct darray
  * @param[in]   t       the type of the elements.
  * @param[in]   i       the index of the element to return.
  *
- * @return      the element of the DArray at the index given by i.
+ * @return              the element of the DArray at the index given by i.
  */
 #define d_array_at(a, t, i)         (((t*) (Any) d_array_data(a))[(i)])
 
@@ -81,7 +109,7 @@ struct darray
  * @param[in]   a       a DArray.
  * @param[in]   t       the type of the elements.
  *
- * @return      the first element in the DArray at the index given by i.
+ * @return              the first element in the DArray.
  */
 #define d_array_front(a, t)         (((t*) (Any) d_array_data(a))[0])
 
@@ -94,7 +122,7 @@ struct darray
  * @param[in]   a       a DArray.
  * @param[in]   t       the type of the elements.
  *
- * @return      the last element in the DArray at the index given by i.
+ * @return              the last element in the DArray.
  */
 #define d_array_back(a, t)          (((t*) (Any) \
                                      d_array_data(a))[d_array_length(a)-1])
@@ -106,7 +134,7 @@ struct darray
  *
  * @param[in]   a       a DArray.
  *
- * @return      the element type in the DArray.
+ * @return              the element type in the DArray.
  */
 #define d_array_type_size(a, i)     ((a)->type_size * (i))
 
@@ -121,7 +149,7 @@ struct darray
  *
  * @param[in]   a       a DArray.
  *
- * @return      the number of elements in the DArray.
+ * @return              the count of elements in the DArray.
  */
 #define d_array_length(a)           ((a)->current_size)
 
@@ -132,7 +160,7 @@ struct darray
  *
  * @param[in]   a       a DArray.
  *
- * @return      true if the DArray is empty, false otherwise.
+ * @return              true if the DArray is empty, false otherwise.
  */
 #define d_array_is_empty(a)         (d_array_length(a) ? false : true)
 
@@ -144,7 +172,7 @@ struct darray
  *
  * @param[in]   a       a DArray.
  *
- * @return      the maximum number of items in the DArray.
+ * @return              the maximum number of items in the DArray.
  */
 #define d_array_length_with_reserve(a) ((a)->full_size)
 
@@ -155,11 +183,9 @@ struct darray
  *
  * @param[in]   a       a DArray.
  *
- * @return      the element type in the DArray from struct.
+ * @return              the element type in the DArray from struct.
  */
 #define d_array_get_type_size(a)    ((a)->type_size)
-
-// #define d_array_at(a, t, i) ((((i) >= 0) && ((i) < d_array_length(a))) ? (((t*) (Any) d_array_data(a))[(i)]) : 0)
 
 /**
  * @def d_array_fill
@@ -188,6 +214,22 @@ struct darray
     d_array_resize(a, (a)->full_size);  \
 } while(0)
 
+/**
+ * @def d_array_qsort
+ *
+ * Sorts the elements in the list, altering their position within the GArray
+ * using standard qsort function.
+ *
+ * @param[in]   a       a DArray.
+ * @param[in]   t       the type of the elements.
+ * @param[in]   f       the comparison function of compare_function type.
+ */
+#define d_array_qsort(a, t, f) do {                      \
+    qsort((a)->array, (a)->current_size, sizeof(t), f); \
+} while(0)
+
+INCLUSION_GUARDS_BEGIN
+
 DArray*
 d_array_new(unsigned int count,
             size_t       type_size);
@@ -207,8 +249,7 @@ d_array_prepend(DArray* array,
 DArray*
 d_array_insert(DArray*      array,
                unsigned int index,
-               CAny         item,
-               unsigned int length);
+               CAny         item);
 
 DArray*
 d_array_remove_index(DArray*      array,
@@ -219,8 +260,33 @@ d_array_resize(DArray*      array,
                unsigned int new_size);
 
 // TO DO
-void
-d_array_sort(DArray*          array,
-             compare_function func);
+DArray*
+d_array_swap(DArray* array,
+             DArray* other_array);
 
-#endif // __DARRAY_H__
+// TO DO
+DArray*
+d_array_reverse(DArray* array);
+
+// TO DO
+DArray*
+d_array_unique(DArray* array);
+
+// TO DO
+DArray*
+d_array_merge(DArray* array,
+              DArray* other_array);
+
+// TO DO
+DArray*
+d_array_remove(DArray* array,
+               CAny    value);
+
+// TO DO
+DArray*
+d_array_remove_if(DArray*            array,
+                  predicate_function func);
+
+INCLUSION_GUARDS_END
+
+#endif /* __DARRAY_H__ */
