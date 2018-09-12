@@ -58,7 +58,7 @@ struct darray
     // Any          array_end_ptr;
     /** The size of the element type in the DArray. */
     size_t       type_size;
-};
+}; /* struct darray */
 
 #define TO_ANY(v)                   ((Any) &(v))
 #define ANY_TO(v, t)                (*((t*) (v)))
@@ -196,10 +196,10 @@ struct darray
  * @param[in]   t       the type of the elements.
  * @param[in]   v       the value to assign to the elements.
  */
-#define d_array_fill(a, t, v) do {                      \
-    d_array_resize(a, d_array_length_with_reserve(a));  \
-    for (int i = 0; i < d_array_length(a); i++)         \
-        d_array_at(a, t, i) = (t) (v);                  \
+#define d_array_fill(a, t, v) do {                                          \
+    d_array_resize(a, d_array_length_with_reserve(a));                      \
+    for (unsigned int i = 0; i < d_array_length(a); i++)                    \
+        d_array_at(a, t, i) = (t) (v);                                      \
 } while(0)
 
 /**
@@ -209,9 +209,9 @@ struct darray
  *
  * @param[in]   a       a DArray.
  */
-#define d_array_shrink_to_fit(a) do {   \
-    (a)->full_size = (a)->current_size; \
-    d_array_resize(a, (a)->full_size);  \
+#define d_array_shrink_to_fit(a) do {                                       \
+    (a)->full_size = (a)->current_size;                                     \
+    d_array_resize(a, (a)->full_size);                                      \
 } while(0)
 
 /**
@@ -224,8 +224,41 @@ struct darray
  * @param[in]   t       the type of the elements.
  * @param[in]   f       the comparison function of compare_function type.
  */
-#define d_array_qsort(a, t, f) do {                      \
-    qsort((a)->array, (a)->current_size, sizeof(t), f); \
+#define d_array_qsort(a, t, f) do {                                         \
+    qsort((a)->array, (a)->current_size, sizeof(t), f);                     \
+} while(0)
+
+/**
+ * @def d_array_remove
+ *
+ * Removes all items that meet certain criteria.
+ * Removes all items that are equal to a value.
+ *
+ * @param[in]   a       a DArray.
+ * @param[in]   t       the type of the elements.
+ * @param[in]   v       value of the elements to remove.
+ */
+#define d_array_remove(a, t, v) do {                                        \
+    for (unsigned int i = 0; i < d_array_length(a); i++)                    \
+        if (d_array_at(a, t, i) == (t) v)                                   \
+            d_array_remove_index(a, i);                                     \
+} while(0)
+
+/**
+ * @def d_array_reverse
+ *
+ * Removes all items that meet certain criteria.
+ * Removes all items that are equal to a value.
+ *
+ * @param[in]   a       a DArray.
+ * @param[in]   t       the type of the elements.
+ */
+#define d_array_reverse(a, t) do {                                          \
+    for (unsigned int i = 0; i < d_array_length(a) / 2; i++) {              \
+        t tmp = d_array_at(a, t, i);                                        \
+        d_array_at(a, t, i) = d_array_at(a, t, d_array_length(a) - 1 - i);  \
+        d_array_at(a, t, d_array_length(a) - 1 - i) = tmp;                  \
+    }                                                                       \
 } while(0)
 
 INCLUSION_GUARDS_BEGIN
@@ -266,21 +299,12 @@ d_array_swap(DArray* array,
 
 // TO DO
 DArray*
-d_array_reverse(DArray* array);
-
-// TO DO
-DArray*
 d_array_unique(DArray* array);
 
 // TO DO
 DArray*
 d_array_merge(DArray* array,
               DArray* other_array);
-
-// TO DO
-DArray*
-d_array_remove(DArray* array,
-               CAny    value);
 
 // TO DO
 DArray*

@@ -14,7 +14,7 @@
  */
 static DArray*
 _d_array_realloc(DArray*      array,
-                unsigned int multiplier);
+                 unsigned int multiplier);
 
 /**
  * Checks the array, expanding it if necessary.

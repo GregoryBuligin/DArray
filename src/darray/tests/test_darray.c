@@ -188,6 +188,42 @@ START_TEST(test_darray_d_array_shrink_to_fit)
 }
 END_TEST
 
+START_TEST(test_darray_d_array_remove)
+{
+    for (int i = 0; i < 3; i++)
+        darray = d_array_append(darray, TO_ANY(i));
+
+    d_array_remove(darray, int, 1);
+    ck_assert_int_eq(d_array_at(darray, int, 0), 0);
+    ck_assert_int_eq(d_array_at(darray, int, 1), 2);
+}
+END_TEST
+
+START_TEST(test_darray_d_array_reverse)
+{
+    for (int i = 0; i < 10; i++)
+        darray = d_array_append(darray, TO_ANY(i));
+
+    d_array_reverse(darray, int);
+
+    ck_assert_int_eq(d_array_at(darray, int, 0), 9);
+    ck_assert_int_eq(d_array_at(darray, int, 1), 8);
+
+    DArray* ar = d_array_new(5, sizeof(char));
+
+    char ch1 = 'a';
+    char ch2 = 'b';
+
+    ar = d_array_append(ar, TO_ANY(ch1));
+    ar = d_array_append(ar, TO_ANY(ch2));
+
+    d_array_reverse(ar, char);
+
+    ck_assert_int_eq(d_array_at(ar, char, 0), 'b');
+    ck_assert_int_eq(d_array_at(ar, char, 1), 'a');
+}
+END_TEST
+
 int
 cmp_function_with_int(CAny a,
                       CAny b)
@@ -292,6 +328,8 @@ darray_suite()
     tcase_add_test(tc_macroses, test_darray_d_array_get_type_size);
     tcase_add_test(tc_macroses, test_darray_d_array_fill);
     tcase_add_test(tc_macroses, test_darray_d_array_shrink_to_fit);
+    tcase_add_test(tc_macroses, test_darray_d_array_remove);
+    tcase_add_test(tc_macroses, test_darray_d_array_reverse);
     tcase_add_test(tc_macroses, test_darray_d_array_sort_with_int);
     tcase_add_test(tc_macroses, test_darray_d_array_sort_with_char);
 
